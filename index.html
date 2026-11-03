@@ -3,7 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="RoboFAPE: Failure-Aware Progress Estimation for Robot Manipulation.">
+  <meta name="description" content="Learning robot task progress from successful and naturally failed executions. Paper, results, and open-source trajectory collection and progress labeling.">
+  <link rel="canonical" href="https://luyingxi35.github.io/RoboFAPE/">
+  <meta property="og:title" content="RoboFAPE: Failure-Aware Progress Estimation for Robot Manipulation">
+  <meta property="og:description" content="Failure-aware progress labels for robot manipulation. Explore the paper, results, and open-source collection and labeling pipeline.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://luyingxi35.github.io/RoboFAPE/">
+  <meta property="og:image" content="https://luyingxi35.github.io/RoboFAPE/figures/teaser_v3.jpeg">
   <title>RoboFAPE | Failure-Aware Progress Estimation</title>
   <style>
     :root { --ink:#17212b; --muted:#61707d; --line:#dfe5e8; --paper:#fbfcfb; --accent:#0d6b6f; --accent-soft:#e3f1ef; --warm:#c76b3e; }
@@ -19,26 +25,40 @@
     nav ul { display:flex; list-style:none; gap:24px; margin:0; padding:0; color:var(--muted); font-size:.9rem; }
     nav a { text-decoration:none; }
     nav a:hover { color:var(--accent); }
-    .hero { padding:66px 0 64px; }
+    .hero { padding:70px 0 64px; text-align:center; }
     .eyebrow { color:var(--accent); font-weight:700; letter-spacing:.1em; text-transform:uppercase; font-size:.76rem; }
-    h1 { font-size:clamp(2.6rem, 6vw, 5rem); line-height:1.03; letter-spacing:-.04em; margin:14px 0 22px; max-width:680px; }
+    h1 { font-size:clamp(2.2rem, 4.7vw, 3.7rem); line-height:1.12; letter-spacing:-.035em; margin:0 auto 26px; max-width:1060px; text-wrap:balance; }
+    h1 span { color:var(--accent); }
+    .authors { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 25px; font-size:1.24rem; margin:0 0 10px; }
+    .authors a { color:var(--accent); text-decoration:none; text-underline-offset:4px; }
+    .authors a:hover { text-decoration:underline; }
+    .authors sup,.affiliations sup { font-size:.68em; margin-left:2px; }
+    .affiliations { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 24px; margin:0; color:var(--muted); }
+    .venue { color:var(--accent); font-size:.93rem; font-weight:600; margin:22px auto 0; }
+    .venue a { text-decoration:none; text-underline-offset:4px; }
+    .venue a:hover { text-decoration:underline; }
+    .hero .actions { justify-content:center; margin-top:26px; }
+    .hero .lede { margin:28px auto 0; max-width:800px; }
+    .hero .button { border-radius:100px; }
+    .button svg { width:18px; height:18px; fill:currentColor; flex-shrink:0; }
+    :focus-visible { outline:3px solid var(--warm); outline-offset:4px; }
+    section { scroll-margin-top:65px; }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .button:hover { transform:none; } }
     .lede { color:var(--muted); font-size:1.15rem; max-width:650px; }
     .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:30px; }
     .button { border:1px solid var(--ink); padding:11px 17px; text-decoration:none; font-weight:700; font-size:.92rem; border-radius:6px; display:inline-flex; align-items:center; gap:8px; }
     .button.primary { color:#fff; background:var(--ink); }
     .button:hover { transform:translateY(-1px); }
-    .hero-figure { margin:38px 0 0; }
-    .hero-figure img { width:100%; display:block; border:1px solid var(--line); box-shadow:0 18px 45px rgba(23,33,43,.12); }
-    .data-figure { margin:0; max-width:900px; }
+    .hero-figure { margin:44px auto 0; max-width:1040px; }
+    .hero-figure img { width:100%; display:block; border:1px solid var(--line); border-radius:8px; }
+    .project-intro { max-width:900px; margin:30px auto 0; text-align:left; font-size:1.04rem; line-height:1.8; color:var(--muted); }
+    .project-intro strong { color:var(--ink); }
+    .data-figure { margin:0 auto; max-width:900px; }
     .data-figure img { width:100%; display:block; border:1px solid var(--line); background:#fff; }
     figcaption { color:var(--muted); font-size:.78rem; margin-top:9px; }
     section { padding:76px 0; border-top:1px solid var(--line); }
     h2 { font-size:clamp(1.7rem, 3vw, 2.45rem); letter-spacing:-.03em; line-height:1.1; margin:0 0 14px; }
     .section-intro { color:var(--muted); max-width:700px; margin:0 0 34px; }
-    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border:1px solid var(--line); background:var(--line); }
-    .stat { background:var(--paper); padding:22px; }
-    .stat strong { display:block; font-size:2rem; line-height:1; margin-bottom:8px; color:var(--accent); }
-    .stat span { color:var(--muted); font-size:.88rem; }
     .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
     .card { border:1px solid var(--line); padding:24px; background:#fff; }
     .card h3 { margin:0 0 8px; font-size:1.08rem; }
@@ -67,44 +87,74 @@
     tr:last-child td { border-bottom:0; }
     .ours { font-weight:800; color:var(--accent); }
     .note { border-left:3px solid var(--warm); padding:14px 17px; color:var(--muted); background:#fff8f3; margin-top:20px; font-size:.9rem; }
-    .release { display:flex; justify-content:space-between; align-items:center; gap:24px; border:1px solid var(--line); padding:24px; background:#fff; }
-    .release h3 { margin:0 0 5px; }
-    .release p { color:var(--muted); margin:0; }
-    .disabled { color:#7c878e; border-color:#cbd2d5; background:#f3f5f5; cursor:not-allowed; }
     footer { padding:30px 0 42px; color:var(--muted); font-size:.84rem; border-top:1px solid var(--line); }
-    @media (max-width:780px) { nav ul { display:none; } .hero { padding-top:50px; } .hero-figure { margin-top:28px; } .stats,.grid-3,.pipeline,.results { grid-template-columns:1fr 1fr; } .step:nth-child(2) { border-right:0; } .step:nth-child(-n+2) { border-bottom:1px solid var(--line); } .release { align-items:flex-start; flex-direction:column; } }
-    @media (max-width:520px) { .wrap { width:min(100% - 28px,1120px); } section { padding:55px 0; } .stats,.grid-3,.pipeline,.results { grid-template-columns:1fr; } .step { border-right:0; border-bottom:1px solid var(--line); } .step:last-child { border-bottom:0; } h1 { font-size:2.8rem; } }
+    @media (max-width:780px) { nav ul { display:none; } .hero { padding-top:50px; } .hero-figure { margin-top:28px; } .grid-3,.pipeline,.results { grid-template-columns:1fr 1fr; } .step:nth-child(2) { border-right:0; } .step:nth-child(-n+2) { border-bottom:1px solid var(--line); } }
+    @media (max-width:520px) { .wrap { width:min(100% - 28px,1120px); } section { padding:55px 0; } .grid-3,.pipeline,.results { grid-template-columns:1fr; } .step { border-right:0; border-bottom:1px solid var(--line); } .step:last-child { border-bottom:0; } h1 { font-size:2.15rem; } .authors { font-size:1.08rem; gap:6px 18px; } .hero { padding-top:38px; } .hero .lede { font-size:1rem; } .result-tabs { gap:6px; } .result-tab { padding:9px 10px; font-size:.85rem; } }
   </style>
 </head>
 <body>
-  <header><div class="wrap"><nav aria-label="Primary navigation"><a class="wordmark" href="#top">ROBO<span>FAPE</span></a><ul><li><a href="#method">Method</a></li><li><a href="#results">Results</a></li><li><a href="#release">Resources</a></li></ul></nav></div></header>
+  <header><div class="wrap"><nav aria-label="Primary navigation"><a class="wordmark" href="#top">ROBO<span>FAPE</span></a><ul><li><a href="#method">Method</a></li><li><a href="#results">Results</a></li></ul></nav></div></header>
   <main id="top">
     <div class="wrap hero">
-      <div><div class="eyebrow">Anonymous submission</div><h1>Failure-aware progress estimation for robot manipulation.</h1><p class="lede">RoboFAPE learns a calibrated, frame-level measure of task progress from both successful and naturally occurring failed executions, enabling more reliable robot learning signals outside the ideal trajectory.</p><div class="actions"><span class="button disabled" aria-disabled="true">Paper - Coming soon</span><a class="button" href="#method">Explore the method</a></div></div>
-      <figure class="hero-figure"><img src="figures/teaser_v3.jpeg" alt="Overview of the RoboFAPE failure-aware progress estimation framework"><figcaption>Failure states are aligned to successful references while preserving stalls and regressions.</figcaption></figure>
+      <h1><span>RoboFAPE:</span> Failure-Aware Progress Estimation for Robot Manipulation</h1>
+      <p class="authors"><span><a href="https://luyingxi35.github.io/">Yingxi Lu</a><sup>1,3</sup></span><span>Kairan Dou<sup>2</sup></span><span>Bu He<sup>1</sup></span><span><a href="https://www.mengdixu.me/">Mengdi Xu</a><sup>1,3</sup></span></p>
+      <p class="affiliations"><span><sup>1</sup> Tsinghua University</span><span><sup>2</sup> Nankai University</span><span><sup>3</sup> Shanghai Qizhi Institution</span></p>
+      <p class="venue"><a href="https://csircorl.github.io/website/">CoRL 2026 Workshop on Continually Self-Improving Robots (CSIR)</a></p>
+      <div class="actions">
+        <a class="button primary" href="paper/RoboFAPE.pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l5 5v15H5V2h1zm7 2H7v16h10V8h-4V4zm2 1.4V6h.6L15 5.4zM9 11h6v2H9zm0 4h6v2H9z"/></svg>Paper PDF</a>
+        <a class="button primary" href="https://github.com/luyingxi35/RoboFAPE-code"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.7 5.3 2 12l6.7 6.7 1.4-1.4L4.8 12l5.3-5.3-1.4-1.4zm6.6 0-1.4 1.4 5.3 5.3-5.3 5.3 1.4 1.4L22 12l-6.7-6.7z"/></svg>Code · GitHub</a>
+      </div>
+      <p class="lede">Learning task progress from successful and naturally failed executions, with labels that capture stalls and regressions.</p>
+      <figure class="hero-figure"><img fetchpriority="high" src="figures/teaser_v3.jpeg" alt="Overview of the RoboFAPE failure-aware progress estimation framework"><figcaption>Failure states are aligned to successful references while preserving stalls and regressions.</figcaption></figure>
+      <p class="project-intro"><strong>How much progress has a robot made when an execution goes wrong?</strong> Labels derived from elapsed time cannot capture a stalled grasp or a dropped object. RoboFAPE assigns frame-level progress to naturally failed policy rollouts by aligning task stages with successful references and resolving ambiguous matches through state distance and temporal continuity. This lets failed trajectories retain stalls and regressions on the same progress scale as successes. We study this supervision across 12 manipulation tasks and evaluate its use in progress estimation, failure detection, trajectory filtering, and a preliminary reinforcement-learning experiment. The public code provides the core trajectory-collection and progress-labeling pipeline.</p>
     </div>
 
-    <section><div class="wrap"><div class="eyebrow">Dataset at a glance</div><h2>Data across tasks and trajectory outcomes.</h2><figure class="data-figure"><img src="figures/data_final.jpg" alt="Trajectory statistics per task from the RoboFAPE dataset"><figcaption>Trajectory statistics per task, reproduced from the paper.</figcaption></figure></div></section>
+    <section><div class="wrap"><div class="eyebrow">Dataset at a glance</div><h2>Data across tasks and trajectory outcomes.</h2><figure class="data-figure"><img loading="lazy" src="figures/data_final.jpg" alt="Trajectory statistics per task from the RoboFAPE dataset"><figcaption>4,800 training trajectories across 12 tasks; 1,200 IND and 400 OOD evaluation trajectories. Successes and failures are balanced.</figcaption></figure></div></section>
 
-    <section id="method"><div class="wrap"><div class="eyebrow">Core idea</div><h2>Progress should be allowed to go backward.</h2><p class="section-intro">Temporal position is a useful label for successful demonstrations, but it cannot describe a dropped object, a stalled grasp, or a recovery. RoboFAPE turns those failure states into direct supervision by matching them to semantically corresponding successful states.</p><div class="pipeline"><div class="step"><span class="number">01</span><b>Decompose the task</b><p>A VLM identifies ordered phases and phase-completion subgoals.</p></div><div class="step"><span class="number">02</span><b>Find a reference</b><p>Each failure phase is paired with a successful phase using its initial distance to the subgoal.</p></div><div class="step"><span class="number">03</span><b>Resolve ambiguity</b><p>Non-monotonic distance profiles are split into monotone segments and matched with temporal coherence.</p></div><div class="step"><span class="number">04</span><b>Train jointly</b><p>Success and failure frames share a calibrated progress scale for estimator training.</p></div></div><div class="grid-3" style="margin-top:18px"><div class="card"><h3>Natural failures</h3><p>Failures arise from autonomous policy rollouts after motion-plan takeover, rather than hand-scripted perturbations.</p></div><div class="card"><h3>Segment-aware labels</h3><p>Viterbi-inspired matching avoids ambiguous distance-only correspondences when a task state regresses.</p></div><div class="card"><h3>Three uses</h3><p>The same signal supports dense reward shaping, runtime failure detection, and demonstration filtering.</p></div></div></div></section>
+    <section id="method"><div class="wrap"><div class="eyebrow">Core idea</div><h2>Progress should be allowed to go backward.</h2><p class="section-intro">Temporal position is a useful label for successful demonstrations, but it cannot describe a dropped object, a stalled grasp, or a recovery. RoboFAPE turns those failure states into direct supervision by matching them to semantically corresponding successful states.</p><div class="pipeline"><div class="step"><span class="number">01</span><b>Decompose the task</b><p>A VLM identifies ordered phases and phase-completion subgoals.</p></div><div class="step"><span class="number">02</span><b>Find a reference</b><p>Each failure phase is paired with a successful phase using its initial distance to the subgoal.</p></div><div class="step"><span class="number">03</span><b>Resolve ambiguity</b><p>Non-monotonic distance profiles are split into monotone segments and matched with temporal coherence.</p></div><div class="step"><span class="number">04</span><b>Train jointly</b><p>Success and failure labels share a reference progress scale for estimator training.</p></div></div><div class="grid-3" style="margin-top:18px"><div class="card"><h3>Natural failures</h3><p>Failures arise from autonomous policy rollouts after motion-plan takeover, rather than hand-scripted perturbations.</p></div><div class="card"><h3>Segment-aware labels</h3><p>Sequential matching combines distance and label continuity to resolve ambiguous correspondences when a task state regresses.</p></div><div class="card"><h3>Three uses</h3><p>We evaluate progress predictions for dense reward shaping, trajectory-level failure detection, and trajectory filtering.</p></div></div></div></section>
 
     <section id="results"><div class="wrap"><div class="eyebrow">Evidence</div><h2>Results</h2><p class="section-intro">We evaluate RoboFAPE first as a progress estimator, then as a signal for three downstream robot-learning applications.</p>
-      <div class="result-block"><h3>Progress Estimation</h3><p class="section-intro">Failure-aware supervision improves temporal consistency on both seen and shifted tasks.</p><div class="results"><div class="result-panel"><h3>OOD Spearman correlation</h3><img src="figures/final_results/progress_spearman_ood.png" alt="OOD Spearman correlation results"><p class="takeaway"><strong>Takeaway:</strong> Natural failure labels improve progress ordering under distribution shift.</p></div><div class="result-panel"><h3>IND progress MSE</h3><img src="figures/final_results/progress_mse_ind.png" alt="IND progress estimation MSE results"><p class="takeaway"><strong>Takeaway:</strong> Failure-aware training preserves competitive accuracy while modeling non-monotonic states.</p></div></div></div>
-      <div class="result-block"><h3>Downstream Applications</h3><div class="result-tabs" role="tablist" aria-label="Downstream applications"><button class="result-tab" role="tab" aria-selected="true" aria-controls="app-reward" data-target="app-reward">Dense Reward</button><button class="result-tab" role="tab" aria-selected="false" aria-controls="app-detection" data-target="app-detection">Failure Detection</button><button class="result-tab" role="tab" aria-selected="false" aria-controls="app-filtering" data-target="app-filtering">Data Filtering</button></div>
-        <div id="app-reward" class="result-view active" role="tabpanel"><div class="results"><div class="result-panel"><h3>PushCube success rate</h3><img src="figures/pushcube_ours_vs_baseline_sr.png" alt="PushCube success rate learning curves"></div><div class="result-panel"><h3>PushCube explained variance</h3><img src="figures/pushcube_ours_vs_baseline_ev.png" alt="PushCube explained variance curves"></div></div><p class="takeaway"><strong>Takeaway:</strong> Failure-aware progress produces a more consistent reward landscape and improves value learning.</p></div>
-        <div id="app-detection" class="result-view" role="tabpanel"><div class="results"><div class="result-panel"><h3>Failure detection - IND</h3><img src="figures/final_results/failure_detection_failure_f1_ind.png" alt="IND failure detection F1 results"></div><div class="result-panel"><h3>Failure detection - OOD</h3><img src="figures/final_results/failure_detection_failure_f1_ood.png" alt="OOD failure detection F1 results"></div></div><div style="overflow-x:auto;margin-top:18px"><table><thead><tr><th>Split</th><th>RoboFAPE</th><th>Success-only + rewind</th><th>Success-only</th></tr></thead><tbody><tr><td>IND F1</td><td class="ours">0.812</td><td>0.649</td><td>0.314</td></tr><tr><td>OOD F1</td><td>0.714</td><td class="ours">0.797</td><td>0.566</td></tr></tbody></table></div><p class="takeaway"><strong>Takeaway:</strong> RoboFAPE gives the strongest in-distribution failure detection, with competitive zero-shot performance.</p></div>
-        <div id="app-filtering" class="result-view" role="tabpanel"><div class="results"><div class="result-panel"><h3>Data filtering - IND</h3><img src="figures/final_results/all_filtering_top50_ind.jpg" alt="IND data filtering results"></div><div class="result-panel"><h3>Data filtering - OOD</h3><img src="figures/final_results/all_filtering_top50_ood.png" alt="OOD data filtering results"></div></div><div style="overflow-x:auto;margin-top:18px"><table><thead><tr><th>Split</th><th>RoboFAPE</th><th>Success-only + rewind</th><th>Success-only</th></tr></thead><tbody><tr><td>IND top-50</td><td class="ours">0.958</td><td>0.197</td><td>0.836</td></tr><tr><td>OOD top-50</td><td>0.770</td><td>0.695</td><td class="ours">0.910</td></tr></tbody></table></div><p class="takeaway"><strong>Takeaway:</strong> Failure-aware scoring substantially improves trajectory retrieval on in-distribution tasks.</p></div>
+      <div class="result-block"><h3>Progress Estimation</h3><p class="section-intro">The clearest improvements are on IND failures. Generalization to shifted environments, objects, and unseen tasks is mixed. Metrics compare predictions with pipeline-generated, manually calibrated reference labels.</p>
+        <div class="results">
+          <div class="result-panel"><h3>IND progress MSE ↓</h3><img loading="lazy" src="figures/final_results/progress_mse_ind.png" alt="IND MSE for successful and failed trajectories across training checkpoints"><p class="takeaway">Natural-failure supervision lowers error on IND failures at the displayed trained checkpoints.</p></div>
+          <div class="result-panel"><h3>IND Spearman correlation ↑</h3><img loading="lazy" src="figures/final_results/progress_spearman_ind.png" alt="IND rank correlation for successful and failed trajectories"><p class="takeaway">Rank agreement on failures improves at later checkpoints; successful trajectories show a tradeoff across metrics.</p></div>
+          <div class="result-panel"><h3>OOD progress MSE ↓</h3><img loading="lazy" src="figures/final_results/progress_mse_ood.png" alt="OOD MSE for successful and failed trajectories"><p class="takeaway">The IND advantage does not transfer uniformly. Rewind augmentation remains competitive on OOD error.</p></div>
+          <div class="result-panel"><h3>OOD Spearman correlation ↑</h3><img loading="lazy" src="figures/final_results/progress_spearman_ood.png" alt="OOD rank correlation across training checkpoints"><p class="takeaway">RoboFAPE reaches higher observed peaks, but the advantage is not sustained at later checkpoints.</p></div>
+        </div>
       </div>
+      <div class="result-block"><h3>Downstream Applications</h3><div class="result-tabs" role="tablist" aria-label="Downstream applications"><button class="result-tab" role="tab" aria-selected="true" id="tab-reward" tabindex="0" aria-controls="app-reward" data-target="app-reward">Dense Reward</button><button class="result-tab" role="tab" aria-selected="false" id="tab-detection" tabindex="-1" aria-controls="app-detection" data-target="app-detection">Failure Detection</button><button class="result-tab" role="tab" aria-selected="false" id="tab-filtering" tabindex="-1" aria-controls="app-filtering" data-target="app-filtering">Data Filtering</button></div>
+        <div id="app-reward" class="result-view active" role="tabpanel" aria-labelledby="tab-reward" tabindex="0"><div class="results"><div class="result-panel"><h3>PushCube success rate</h3><img loading="lazy" src="figures/pushcube_ours_vs_baseline_sr.png" alt="PushCube success rate learning curves"></div><div class="result-panel"><h3>PushCube explained variance</h3><img loading="lazy" src="figures/pushcube_ours_vs_baseline_ev.png" alt="PushCube explained variance curves"></div></div><p class="takeaway">A preliminary PushCube PPO experiment shows modest success-rate differences and higher critic explained variance relative to <strong>success-only</strong> training. The reward uses predicted progress and simulator success. Results on one task do not establish general RL gains.</p></div>
+        <div id="app-detection" class="result-view" role="tabpanel" aria-labelledby="tab-detection" tabindex="0"><div class="results"><div class="result-panel"><h3>Failure detection - IND</h3><img loading="lazy" src="figures/final_results/failure_detection_failure_f1_ind.png" alt="IND failure detection F1 results"></div><div class="result-panel"><h3>Failure detection - OOD</h3><img loading="lazy" src="figures/final_results/failure_detection_failure_f1_ood.png" alt="OOD failure detection F1 results"></div></div><div style="overflow-x:auto;margin-top:18px"><table><thead><tr><th>Split</th><th>RoboFAPE</th><th>Success-only + rewind</th><th>Success-only</th></tr></thead><tbody><tr><td>IND Failure F1</td><td class="ours">0.812</td><td>0.649</td><td>0.314</td></tr><tr><td>OOD Failure F1</td><td>0.714</td><td class="ours">0.797</td><td>0.566</td></tr></tbody></table></div><p class="takeaway">RoboFAPE achieves the highest IND Failure F1; rewind augmentation performs better on OOD. Failure is the positive class, and F1 is averaged equally over tasks. Detection uses at most 30 frames: any 12-frame window with progress–time Pearson &lt; −0.2, or final progress &lt; 0.5, marks a failure.</p></div>
+        <div id="app-filtering" class="result-view" role="tabpanel" aria-labelledby="tab-filtering" tabindex="0"><div class="results"><div class="result-panel"><h3>Data filtering - IND</h3><img loading="lazy" src="figures/final_results/all_filtering_top50_ind.jpg" alt="IND data filtering results"></div><div class="result-panel"><h3>Data filtering - OOD</h3><img loading="lazy" src="figures/final_results/all_filtering_top50_ood.png" alt="OOD data filtering results"></div></div><div style="overflow-x:auto;margin-top:18px"><table><thead><tr><th>Split</th><th>RoboFAPE</th><th>Success-only + rewind</th><th>Success-only</th></tr></thead><tbody><tr><td>IND top-50</td><td class="ours">0.958</td><td>0.197</td><td>0.836</td></tr><tr><td>OOD top-50</td><td>0.770</td><td>0.695</td><td class="ours">0.910</td></tr></tbody></table></div><p class="takeaway">RoboFAPE achieves the highest IND top-50 correctness, while success-only training performs better on OOD. For each query task, candidates include all test trajectories across tasks and quality levels. Ranking sums normalized progress–time Pearson correlation, net progress change, and final progress.</p></div>
+      </div>
+      <p class="note">Dots are measured checkpoints; smooth curves are visual guides. Detection and filtering tables report best observed scores selected separately on each evaluation split, including step 0. These are not multi-seed confidence intervals.</p>
     </div></section>
 
-    <section id="release"><div class="wrap"><div class="eyebrow">Reproducibility</div><h2>Code and data will be released after review.</h2><p class="section-intro">The submission page is intentionally anonymous. Public links are placeholders until the review process permits attribution and release.</p><div class="release"><div><h3>Open-source implementation</h3><p>Training, labeling, evaluation, and configuration files.</p></div><span class="button disabled" aria-disabled="true">Code - Coming soon</span></div><div class="release" style="margin-top:12px"><div><h3>Failure-aware progress dataset</h3><p>Successful and naturally occurring failed trajectories with progress annotations.</p></div><span class="button disabled" aria-disabled="true">Dataset - Coming soon</span></div><div class="actions"><span class="button disabled" aria-disabled="true">Paper PDF - Coming soon</span></div></div></section>
   </main>
-  <footer><div class="wrap">Anonymous project page for review. Author identities, affiliations, and contact links are intentionally omitted.</div></footer>
+  <footer><div class="wrap">RoboFAPE · Yingxi Lu, Kairan Dou, Bu He, Mengdi Xu</div></footer>
   <script>
-    document.querySelectorAll('.result-tab').forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        document.querySelectorAll('.result-tab').forEach(function (item) { item.setAttribute('aria-selected', item === tab); });
-        document.querySelectorAll('.result-view').forEach(function (view) { view.classList.toggle('active', view.id === tab.dataset.target); });
+    const tabs = Array.from(document.querySelectorAll('.result-tab'));
+    function selectTab(tab) {
+      tabs.forEach(function (item) {
+        item.setAttribute('aria-selected', String(item === tab));
+        item.tabIndex = item === tab ? 0 : -1;
+      });
+      document.querySelectorAll('.result-view').forEach(function (view) {
+        view.classList.toggle('active', view.id === tab.dataset.target);
+      });
+    }
+    tabs.forEach(function (tab, index) {
+      tab.addEventListener('click', function () { selectTab(tab); });
+      tab.addEventListener('keydown', function (event) {
+        let next;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        selectTab(tabs[next]);
+        tabs[next].focus();
       });
     });
   </script>
